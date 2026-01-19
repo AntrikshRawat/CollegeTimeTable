@@ -7,6 +7,7 @@
   "theme_color": "#4f46e5",
   "description": "My college daily schedule.",
   "orientation": "portrait",
+  "scope": "/",
   "icons": [
     {
       "src": "icon-192.png",
@@ -18,5 +19,10 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "developer": {
+    "name": "Antriksh Rawat",
+    "url": "https://github.com/AntrikshRawat",
+    "email": "antrikshrawat2@gmail.com"
+  }
 }
