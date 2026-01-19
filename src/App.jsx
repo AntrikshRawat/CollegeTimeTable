@@ -82,7 +82,7 @@ const App = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center p-4 bg-gray-50 text-gray-800 font-sans">
+    <div className="min-h-screen flex flex-col items-center p-4 bg-gray-50 text-gray-800 font-sans overflow-hidden">
       
       {/* Header with Toggle */}
       <header className="w-full max-w-sm mb-6 mt-2 flex justify-between items-end">
@@ -140,7 +140,7 @@ const App = () => {
             </div>
             ) : nextClass ? (
             // NEXT CLASS CARD
-            <div className="bg-gradient-to-br from-indigo-600 to-purple-700 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden">
+            <div className="bg-linear-to-br from-indigo-600 to-purple-700 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden">
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
                 <p className="text-xs font-bold uppercase tracking-widest text-indigo-200 mb-2">Up Next</p>
                 <h2 className="text-2xl font-bold mb-1 leading-tight">
@@ -196,7 +196,7 @@ const App = () => {
                     <div className="absolute top-4 right-4 bg-gray-100 text-gray-400 text-xs font-bold px-2 py-1 rounded-md">
                         #{index + 1}
                     </div>
-                    <div className="mt-2">
+                    <div className="mt-2 h-40">
                         <span className="inline-block bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider mb-2">
                             {cls.total_hours}
                         </span>
