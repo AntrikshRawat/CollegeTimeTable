@@ -12,11 +12,40 @@ const App = () => {
   const [currentDay, setCurrentDay] = useState("");
   const [displayDate, setDisplayDate] = useState(new Date());
   const [nextClass, setNextClass] = useState(null);
+  const [classStatus, setClassStatus] = useState(""); // "Ongoing" or "Up Next"
   const [remainingClasses, setRemainingClasses] = useState([]);
   const [isSunday, setIsSunday] = useState(false);
 
   useEffect(() => {
     loadSchedule(viewMode);
+    
+    // Smart auto-refresh: syncs to 15-minute intervals
+    const scheduleNextRefresh = () => {
+      const now = new Date();
+      const currentMin = now.getMinutes();
+      const currentSec = now.getSeconds();
+      
+      // Calculate minutes until next 15-minute mark (0, 15, 30, 45)
+      const minUntilNext15 = 14 - (currentMin % 15);
+      // Calculate seconds remaining in current minute
+      const secRemaining = 60 - currentSec;
+      
+      // Total milliseconds until next refresh
+      const msUntilRefresh = (minUntilNext15 * 60 * 1000) + (secRemaining * 1000);
+      
+      return setTimeout(() => {
+        if (viewMode === "today") {
+          loadSchedule("today");
+        }
+        // Schedule the next refresh
+        const intervalId = scheduleNextRefresh();
+        return () => clearTimeout(intervalId);
+      }, msUntilRefresh);
+    };
+    
+    const timeoutId = scheduleNextRefresh();
+    
+    return () => clearTimeout(timeoutId);
   }, [viewMode]);
 
   const loadSchedule = (mode) => {
@@ -49,35 +78,60 @@ const App = () => {
     }
   };
 
-  const processTodaySchedule = (schedule, dateRef) => {
+  const processTodaySchedule = (schedule) => {
     // We use the actual current time for filtering
     const now = new Date(); 
     
     // DEBUG: Uncomment to test specific time logic
     // now.setHours(10, 0, 0, 0); 
 
-    let upcoming = null;
+    let currentClass = null;
+    let status = "";
     let others = [];
 
-    const parseTime = (timeStr) => {
-      const [start] = timeStr.split("-");
-      return parse(start.trim(), "h:mm a", now);
+    const parseTimeRange = (timeStr) => {
+      const [startStr, endStr] = timeStr.split("-");
+      const startTime = parse(startStr.trim(), "h:mm a", now);
+      const endTime = parse(endStr.trim(), "h:mm a", now);
+      return { startTime, endTime };
     };
 
-    const futureClasses = schedule.filter((cls) => {
-      const classStartTime = parseTime(cls.time);
-      return isAfter(classStartTime, now);
+    // First, check if there's an ongoing class
+    const ongoingClass = schedule.find((cls) => {
+      const { startTime, endTime } = parseTimeRange(cls.time);
+      return !isAfter(startTime, now) && isAfter(endTime, now);
     });
 
-    if (futureClasses.length > 0) {
-      upcoming = futureClasses[0];
-      others = futureClasses.slice(1);
+    if (ongoingClass) {
+      // There's a class happening right now
+      currentClass = ongoingClass;
+      status = "Ongoing";
+      
+      // Remaining classes are all future classes
+      others = schedule.filter((cls) => {
+        const { startTime } = parseTimeRange(cls.time);
+        return isAfter(startTime, now);
+      });
     } else {
-      upcoming = null;
-      others = []; // No classes left
+      // No ongoing class, find the next upcoming one
+      const futureClasses = schedule.filter((cls) => {
+        const { startTime } = parseTimeRange(cls.time);
+        return isAfter(startTime, now);
+      });
+
+      if (futureClasses.length > 0) {
+        currentClass = futureClasses[0];
+        status = "Up Next";
+        others = futureClasses.slice(1);
+      } else {
+        currentClass = null;
+        status = "";
+        others = [];
+      }
     }
 
-    setNextClass(upcoming);
+    setNextClass(currentClass);
+    setClassStatus(status);
     setRemainingClasses(others);
   };
 
@@ -139,14 +193,19 @@ const App = () => {
                 </p>
             </div>
             ) : nextClass ? (
-            // NEXT CLASS CARD
-            <div className="bg-linear-to-br from-indigo-600 to-purple-700 rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden">
+            // NEXT CLASS CARD (Ongoing or Up Next)
+            <div className={`rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden ${
+              classStatus === "Ongoing" 
+                ? "bg-gradient-to-br from-green-500 to-emerald-700" 
+                : "bg-gradient-to-br from-indigo-600 to-purple-700"
+            }`}>
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
-                <p className="text-xs font-bold uppercase tracking-widest text-indigo-200 mb-2">Up Next</p>
+                <p className="text-xs font-bold uppercase tracking-widest text-indigo-200 mb-2">{classStatus}</p>
                 <h2 className="text-2xl font-bold mb-1 leading-tight">
                     {nextClass.subject.split("-").pop().trim()}
                 </h2>
-                <p className="text-xs text-indigo-100 mb-6 opacity-80">{nextClass.subject}</p>
+                <p className="text-xs text-indigo-100 mb-1 opacity-80">{nextClass.subject}</p>
+                <p className="text-sm text-white/90 font-medium mb-4">{nextClass.teacher}</p>
                 <div className="flex justify-between items-end border-t border-white/20 pt-4">
                 <div>
                     <div className="flex items-center text-indigo-100 text-xs mb-1">
