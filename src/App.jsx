@@ -133,9 +133,19 @@ const App = ({timetableData}) => {
     setRemainingClasses(others);
   };
 
+   const clearData = () => {
+    if (window.confirm("Delete saved timetable?")) {
+      localStorage.removeItem('myTimetable');
+      setTimetable(null);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center p-4 bg-gray-50 text-gray-800 font-sans overflow-hidden">
-      
+      <div className="flex items-center justify-between bg-white px-5 py-3 rounded-xl border border-slate-200 shadow-sm">
+            <span className="text-slate-500 font-medium text-sm italic">Data stored locally</span>
+            <button onClick={clearData} className="text-red-500 text-sm font-bold hover:bg-red-50 px-3 py-1 rounded-lg">Reset</button>
+          </div>
       {/* Header with Toggle */}
       <header className="w-full max-w-sm mb-6 mt-2 flex justify-between items-end">
         <div>
@@ -279,7 +289,6 @@ const App = ({timetableData}) => {
               ))}
             </Swiper>
             <div className="text-center mt-4 flex justify-center items-center text-gray-400 text-xs animate-pulse">
-                <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                 Swipe cards to see more
             </div>
           </div>
