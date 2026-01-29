@@ -110,15 +110,14 @@ const Home = () => {
                 📋 Copy Import Script
               </button>
 
-              <div className="text-left text-sm text-slate-500 space-y-4 bg-slate-50 p-5 rounded-xl border border-slate-200">
-                <p className="font-bold text-slate-700 text-xs uppercase underline">Android Setup Guide:</p>
+              <div className="text-left text-sm text-slate-500 space-y-4 bg-slate-50 p-5 rounded-lg border border-slate-200">
+                <p className="font-bold text-slate-700 uppercase tracking-tight text-xs">Steps for Android:</p>
                 <ol className="list-decimal list-outside ml-4 space-y-3">
-                  <li>Tap the **Copy** button above.</li>
-                  <li>Bookmark this page (Three dots ⋮ → ☆).</li>
-                  <li>Go to **Bookmarks**, find this page, tap ⋮ and select **Edit**.</li>
-                  <li>Replace the **URL** field with the script you copied and rename it to "Import".</li>
-                  <li>Open your **College Dashboard**.</li>
-                  <li>Tap the address bar, type "Import", and select your bookmark.</li>
+                  <li><strong>Create a placeholder:</strong> Bookmark this current page (tap three dots ⋮ then ☆).</li>
+                  <li><strong>Edit the Bookmark:</strong> Go to Bookmarks, find this page, tap the dots next to it, and select <strong>Edit</strong>.</li>
+                  <li><strong>Update URL:</strong> Clear the "URL" field and <strong>paste</strong> the script you just copied. Change the name to "Import Timetable".</li>
+                  <li><strong>Run the script:</strong> Log in to your <strong>College Dashboard</strong> where the timetable is.</li>
+                  <li><strong>Import:</strong> Tap the address bar, type "Import Timetable", and click the bookmark result that appears.</li>
                 </ol>
               </div>
             </div>
