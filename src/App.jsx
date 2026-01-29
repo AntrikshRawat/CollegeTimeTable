@@ -1,13 +1,12 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { format, parse, isAfter, addDays } from "date-fns";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { EffectCards } from "swiper/modules";
-import { timetableData } from "./data";
 
 import "swiper/css";
 import "swiper/css/effect-cards";
 
-const App = () => {
+const App = ({timetableData}) => {
   const [viewMode, setViewMode] = useState("today"); // 'today' or 'tomorrow'
   const [currentDay, setCurrentDay] = useState("");
   const [displayDate, setDisplayDate] = useState(new Date());
@@ -15,7 +14,6 @@ const App = () => {
   const [classStatus, setClassStatus] = useState(""); // "Ongoing" or "Up Next"
   const [remainingClasses, setRemainingClasses] = useState([]);
   const [isSunday, setIsSunday] = useState(false);
-
   useEffect(() => {
     loadSchedule(viewMode);
     
@@ -54,14 +52,14 @@ const App = () => {
     const targetDate = mode === "tomorrow" ? addDays(today, 1) : today;
     
     setDisplayDate(targetDate);
-    const dayName = format(targetDate, "EEEE");
+    const dayName = format(targetDate, "EEEE").toUpperCase();
     setCurrentDay(dayName);
 
     // Handle Sunday Case
-    if (dayName === "Sunday") {
+    if (dayName === "SUNDAY") {
       setIsSunday(true);
       // On Sunday, we show Monday's data in the list
-      setRemainingClasses(timetableData["Monday"] || []);
+      setRemainingClasses(timetableData["MONDAY"] || []);
       setNextClass(null); 
     } else {
       setIsSunday(false);
@@ -180,7 +178,7 @@ const App = () => {
         <div className="w-full max-w-sm mb-8 z-10 animate-fade-in-down">
             {isSunday ? (
             // SUNDAY CARD
-            <div className="bg-gradient-to-br from-green-400 to-emerald-600 rounded-3xl shadow-2xl p-6 text-white transform transition hover:scale-[1.02]">
+            <div className="bg-linear-to-br from-green-400 to-emerald-600 rounded-3xl shadow-2xl p-6 text-white transform transition hover:scale-[1.02]">
                 <div className="flex items-center mb-4">
                 <span className="text-4xl mr-3">😎</span>
                 <div>
@@ -194,10 +192,10 @@ const App = () => {
             </div>
             ) : nextClass ? (
             // NEXT CLASS CARD (Ongoing or Up Next)
-            <div className={`rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden ${
+            <div className={`rounded-3xl shadow-2xl p-6 text-white relative overflow-hidden bg-linear-to-br ${
               classStatus === "Ongoing" 
-                ? "bg-gradient-to-br from-green-500 to-emerald-700" 
-                : "bg-gradient-to-br from-indigo-600 to-purple-700"
+                ? " from-green-500 to-emerald-700" 
+                : " from-indigo-600 to-purple-700"
             }`}>
                 <div className="absolute -top-10 -right-10 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
                 <p className="text-xs font-bold uppercase tracking-widest text-indigo-200 mb-2">{classStatus}</p>
@@ -235,13 +233,13 @@ const App = () => {
       )}
 
       {/* SWIPE SECTION */}
-      <div className={`w-full max-w-sm flex-1 flex flex-col transition-all duration-500 ${viewMode === 'tomorrow' ? 'mt-4 h-[500px]' : ''}`}>
+      <div className={`w-full max-w-sm flex-1 flex flex-col transition-all duration-500 ${viewMode === 'tomorrow' ? 'mt-4 h-125' : ''}`}>
         <h3 className="text-md font-bold text-gray-400 uppercase tracking-widest mb-4 px-2">
           {viewMode === "tomorrow" ? (isSunday ? "Monday's Plan" : "Full Schedule") : (isSunday ? "Monday's Plan" : "Coming Up")}
         </h3>
 
         {remainingClasses.length > 0 ? (
-          <div className="flex-1 h-[340px]">
+          <div className="flex-1 h-85">
             <Swiper
               effect={"cards"}
               grabCursor={true}
