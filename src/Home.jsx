@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import App from './App';
 
-const Home = () => {
-  const [timetable, setTimetable] = useState(null);
+const Import = () => {
   const [isMobile, setIsMobile] = useState(false);
   const bookmarkRef = useRef(null);
 
@@ -44,14 +43,10 @@ const Home = () => {
         }
         
         localStorage.setItem('myTimetable', JSON.stringify(timeTable));
-        setTimetable(timeTable);
         window.history.replaceState({}, document.title, window.location.pathname);
       } catch (e) {
         console.error(e);
       }
-    } else {
-      const saved = localStorage.getItem('myTimetable');
-      if (saved) setTimetable(JSON.parse(saved));
     }
   }, [bookmarkletCode]);
 
@@ -84,12 +79,10 @@ const Home = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-6 text-center font-sans">
-      <h1 className="text-3xl font-bold text-slate-800 mb-6 tracking-tight">
-        {timetable ? "College Schedule" : "Import Timetable"}
-      </h1>
-
-      {!timetable ? (
         <div className="bg-white border-2 border-dashed border-slate-300 rounded-2xl p-8 shadow-sm">
+          <h1 className="text-3xl font-bold text-slate-800 mb-6 tracking-tight">
+        Import Timetable
+      </h1>
           {isMobile ? (
             <div className="space-y-6">
               <div className="bg-blue-50 p-4 rounded-lg text-blue-800 text-sm font-medium">
@@ -116,7 +109,7 @@ const Home = () => {
             </div>
           ) : (
             <div className="space-y-6">
-              <p className="text-slate-600 font-medium">Desktop detected</p>
+              <p className="text-slate-600 font-medium">💻 Desktop detected</p>
               <a 
                 ref={bookmarkRef}
                 className="inline-block bg-blue-600 text-white font-bold py-3 px-10 rounded-xl cursor-move shadow-md hover:bg-blue-700 transition-colors"
@@ -127,11 +120,21 @@ const Home = () => {
             </div>
           )}
         </div>
-      ) : (
-          <App timetableData={timetable} /> 
-      )}
     </div>
   );
 };
+
+const Home = () =>{
+  const [timetable, setTimetable] = useState(null);
+
+  useEffect(()=>{
+    let timeTable = JSON.parse(localStorage.getItem("myTimetable"));
+    setTimetable(timeTable);
+  },[]);
+
+  if(!timetable) return <Import/>;
+
+  return <App timetableData={timetable}/>;
+}
 
 export default Home;
